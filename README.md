@@ -6,6 +6,8 @@
 
 [helloworld.go](section1/helloworld.go)
 
+---
+
 ## Section 2
 
 ### 2.1. 변수  
@@ -80,7 +82,7 @@ a = 1 // 에러 발생
 
 - 동일한 데이터타입의 상수를 한 번에 선언 가능
 - 다른데이터타입의 상수도 한 번에 선언 가능
-- 변수 선완과 마찬가지로 그룹화해서 선언 가능
+- 변수 선언과 마찬가지로 그룹화해서 선언 가능
 
 여러개의 상수 선언 예제 : [const2.go](section2/const2.go)
 
@@ -94,3 +96,76 @@ a = 1 // 에러 발생
 - `iota` 의 증가값의 중간 생략이 필요할 경우 밑줄(`_`)로 생략가능
 
 열거형 사용 예제 : [enumeration1.go](section2/enumeration1.go)
+
+---
+
+## Section 3 - 제어문, 반복문 
+
+### 3.1. if 문 
+
+- 반드시 bool 검사 필요
+- 괄호 사용. 단 1개 라인만 기술되더라도 괄호 필요 
+
+if 문 사용 예제 : [if1.go](section3/if1.go)
+
+### 3.2. switch 문 
+
+- switch 뒤 표현식(Expression) 생략 가능
+- case 뒤 표현식(Expression) 사용 가능
+- 자동 break 로 인한 fallthrough 존재
+- Type 으로 분기 가능 -> 값이 아닌 변수 Type 으로 분기 가능
+
+switch 문 사용 예제 1 : [switch1.go](section3/switch1.go) <br>
+switch 문 사용 예제 2 : [switch2.go](section3/switch2.go) <br>
+switch 문 사용 예제 3 : [switch3.go](section3/switch3.go) <br>
+
+### 3.3. for 문
+
+#### 3.3.1. 많이 사용되는 일반적인 for 문 
+
+- Golang 에서 유일한 반복문
+- 일반적으로 알고있는 for 의 구조와 동일
+- 배열의 경우 range 순회 기능 존재 (인덱스와 값을 동시에 받아 사용 가능)
+- 인덱스와 값을 동시에 획득시 밑줄(`_`) 을 사용하여 특정값을 생략할 수 있음
+
+```go
+// 일반적인 for 
+for {초기화 문}; {조건 판별}; {증감} {
+	// ....
+}
+
+// 배열을 받아 range 로 순회 
+loc := []string{"AA", "BB", "CC"}
+
+for index, name := range loc {
+    fmt.Println("index : ", index, ", name : ", name)
+}
+```
+
+for 사용 예제 1 : [for1.go](section3/for1.go)
+
+#### 3.3.2. 다양한 형태의 for 문 
+
+- 조건문만 표시해서 while 문 처럼 사용가능
+- 초기화문, 조건판별, 증감식에서 사용되는 변수를 여러개 사용 가능 
+- `break` 로 반복문 중지 가능
+
+```go
+// 조건문만 for 에 표시하여 while 처럼 사용 가능
+sum, i := 0, 0
+for i <= 100 {
+	sum += i
+	i ++
+}
+```
+
+for 사용 예제 2 : [for2.go](section3/for2.go)
+
+#### 3.3.3. break, continue 와 label 을 활용한 for 문 제어 
+
+- `break` 사용시 label 명 을 기술하여 원하는 for 문을 중지 시킬 수 있음
+- `break` 만 사용시에는 가장 가까운 for 문만 중지 됨 
+
+for 사용 예제 3 : [for3.go](section3/for3.go)
+
+
