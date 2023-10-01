@@ -9,5 +9,6 @@ func main() {
 	//section2.Variable2()
 	//section2.Variable3()
 	//section2.Const1()
-	section2.Const2()
+	//section2.Const2()
+	section2.Enumeration1()
 }
