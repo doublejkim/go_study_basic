@@ -226,3 +226,36 @@ import (
 - 초기화가 필요한 경우 해당 함수 활용
 - 여러개 사용 가능하지만 권고하지 않음 
 
+## Section 5. Go 데이터 타입 (자료형)
+
+### 5.1. bool
+
+- 참 과 거짓 표현
+- 조건부 논리 연산자와 주료 사용 : `!`, `&&`, `||`
+- 암묵적 형변환 불가(X) : 0, null, Nil -> false 변환 없음
+
+bool 타입 예제 1 : [bool1.go](section5/bool1.go)
+
+### 5.2. 숫자형 기초 (Numeric types)
+
+- 정수, 실수, 복소수
+- 32bit, 64bit, unsigned
+- 정수 : 8진수(0), 16진수(0x), 10진수 
+> [Golang 스펙 - Numeric types](https://go.dev/ref/spec#Numeric_types)
+
+숫자형 예제 1 : [numeric1.go](section5/numeric1.go)
+
+- 실수(부동소수점)
+- float32(소수7자리), float64(소수15자리)
+
+숫자형 예제 2 : [numeric2.go](section5/numeric2.go)
+
+### 5.3. 숫자형 연산
+
+- 타입이 같아야 연산 가능
+- 다른 타입끼리는 반드시 형 변환 후 연산
+- 형 변환 없을 경우 예외(에러) 발생
+
+> [Golang 스펙 - Operators](https://go.dev/ref/spec#Operators)
+
+숫자형 연산 예제 1 : [number_operation1.go](section5/number_operation1.go)
