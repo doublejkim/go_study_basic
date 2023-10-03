@@ -1,6 +1,6 @@
 package main
 
-import "go_study_basic/section3"
+import "go_study_basic/section4"
 
 func main() {
 
@@ -17,5 +17,6 @@ func main() {
 	//section3.Switch3()
 	//section3.For1()
 	//section3.For2()
-	section3.For3()
+	//section3.For3()
+	section4.InitTest1()
 }
