@@ -259,3 +259,19 @@ bool 타입 예제 1 : [bool1.go](section5/bool1.go)
 > [Golang 스펙 - Operators](https://go.dev/ref/spec#Operators)
 
 숫자형 연산 예제 1 : [number_operation1.go](section5/number_operation1.go)
+
+### 5.4. 문자열 기초 
+
+- 큰 따옴표 (`"`), 백스쿼트 로 표현
+- 문자 char 타입 존재 하지 않음 -> 대신 rune(int32) 사용. 문자 코드값
+- 문자 : 작은 따옴표 (`'`) 로 표현 
+- 자주 사용하는 escape : `\\`, `\'`, `\"`, `\a`, `\b`, `\n`, `\r`, `\t`
+
+> [Golang 스펙 - String types](https://go.dev/ref/spec#String_types)
+
+문자열 기초 예제 1 : [string1.go](section5/string1.go)
+
+- 문자열 : UTF-8 인코딩 (유니코드 문자 집합
+- 
+
+문자열 기초 예제 1 : [string2.go](section5/string2.go)
