@@ -272,6 +272,29 @@ bool 타입 예제 1 : [bool1.go](section5/bool1.go)
 문자열 기초 예제 1 : [string1.go](section5/string1.go)
 
 - 문자열 : UTF-8 인코딩 (유니코드 문자 집합
-- 
+- 배열 인덱스로 접근할수있지만, 실제 언어별 한글자를 의미하는 한 요소에 접근하고 싶다면 `[]rune` 타입으로 캐스팅후 루핑하면 가능
 
 문자열 기초 예제 1 : [string2.go](section5/string2.go)
+
+### 5.5. 문자열 연산 
+
+#### 5.5.1. 문자열 추출 
+
+- 슬라이싱을 사용하면 문자열을 추출 가능 (like substring)
+- 1개만 추출하면 문자 번호를 추출
+
+문자열 예제 1 : [string_oper1.go](section5/string_oper1.go)
+
+#### 5.5.2. 문자열 비교 
+
+- 같음(`==`), 같지 않음(`!=`) 비교는 가능
+- 크기비교는 아스키코드값 기준으로 앞에서부터 비교함 (`<, >`)
+
+문자열 예제 2 : [string_oper2.go](section5/string_oper2.go)
+
+#### 5.5.3. 문자열 결합
+
+- plus(`+`) 연산을 통해 단순 결합 가능 
+- join 을 통하여 성능을 고려하여 결합 가능 
+
+문자열 예제 3 : [string_oper3.go](section5/string_oper3.go)

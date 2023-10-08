@@ -24,5 +24,8 @@ func main() {
 	//section5.Numeric2()
 	//section5.Number_Operation1()
 	//section5.String1()
-	section5.String2()
+	//section5.String2()
+	//section5.StringOper1()
+	//section5.StringOper2()
+	section5.StringOper3()
 }
