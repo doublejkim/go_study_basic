@@ -30,5 +30,7 @@ func main() {
 	//section5.StringOper3()
 	//section6.Array1()
 	//section6.Array2()
-	section6.Array3()
+	//section6.Array3()
+	//section6.SliceBasic1()
+	section6.SliceBasic2()
 }
