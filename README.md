@@ -359,3 +359,49 @@ for i, v := range arr {
 
 슬라이스 기초 예제 2 : [slice_basic2.go](section6/slice_basic2.go)
 
+### 6.3. 슬라이스 심화
+
+#### 6.3.1. 슬라이스 추가 및 병합 
+
+- 슬라이스에 요소나 다른 슬라이스를 추가하려면 `append` 사용
+- 슬라이스의 capa 는 꽉 찼을경우 2배씩 증가 됨 
+
+슬라이스 심화 예제 1 : [slice_ex1.go](section6/slice_ex1.go)
+
+#### 6.3.2. 슬라이스 추출 및 정렬
+
+- 슬라이싱 연산으로 subtring 가능 
+
+```go
+slice[i:j] // i ~ j-1 까지 추출 
+slice[i:]  // i ~ 마지막까지 추출 
+slice[:j]  // 처음 ~ j-1 까지 추출 
+slice[:]   // 처음 ~ 마지막 까지 추출 
+```
+
+- 슬라이스 정렬시 기본 자료형은 `sort` 패키지내에 오름차순정렬하는 기본 함수 제공
+- 그 외에 정렬을하거나 내림차순이 정렬이 필요하면 [데이터타입]Slice 형태의 타입을 제공하는데, 해당 타입으로 캐스팅후 Sort 함수를 사용
+
+```go
+// 기본자료형은 오름차순 함수를 기본으로 제공함 
+sort.Ints(slice)
+sort.Float64s(slice)
+sort.Strings(slice)   
+
+// 내림 차순 정렬이 필요하면 아래와 같이 사용
+sort.Sort(sort.Revers(sort.IntSlice(slice)))
+...
+```
+
+슬라이스 심화 예제 2 : [slice_ex2.go](section6/slice_ex2.go)
+
+#### 6.3.3. 슬라이스 값 복사 
+
+- `copy` 로 복사 가능
+- `make` 로 공간을 할당 후 복사 해야함. 공간이 할당되지 않으면 복사되지 않음
+- 복사 된 슬라이스 의 값을 변경해도 원본에는 영향 없음 
+- 주의 : 부분적인 슬라이스 추출은 참조 가 되어버림
+- 부분 슬라이스 추출할때 3번째 값을 적어주면 참조되어지는 Target 슬라이스의 capa 를 지정할 수 있음 
+
+슬라이스 심화 예제 3 : [slice_ex3.go](section6/slice_ex3.go)
+
