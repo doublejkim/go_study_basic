@@ -1,6 +1,6 @@
 package main
 
-import "go_study_basic/section5"
+import "go_study_basic/section6"
 
 func main() {
 
@@ -27,5 +27,8 @@ func main() {
 	//section5.String2()
 	//section5.StringOper1()
 	//section5.StringOper2()
-	section5.StringOper3()
+	//section5.StringOper3()
+	//section6.Array1()
+	//section6.Array2()
+	section6.Array3()
 }

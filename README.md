@@ -298,3 +298,42 @@ bool 타입 예제 1 : [bool1.go](section5/bool1.go)
 - join 을 통하여 성능을 고려하여 결합 가능 
 
 문자열 예제 3 : [string_oper3.go](section5/string_oper3.go)
+
+## Section 6. 데이터타입 Advanced (array, slice, map, pointer)
+
+### 6.1. 배열 (Array)
+
+#### 6.1.1. 배열 선언 및 사용
+
+- 배열은 용량, 길이 항상 같음 
+- 배열 : 길이 고정, 값 타입, 복사 전달, 비교 연산자 사용 가능
+- 슬라이스 : 길이 가변, 참조 타입, 참조 값 전달, 비교 연산자 사용 불가능 
+- `cap()` : 배열, 슬라이스 용량 구하는 함수
+- `len()` : 배열, 슬라이스 갯수 구하는 함수
+
+배열 사용 예제 : [arra1.go](section6/array1.go)
+
+#### 6.1.2. 배열 순회 
+
+- 배열의 길이 만큼 순회하는 전통적인 방식으로 순회 가능
+- `range` 키워드를 활용한 index, value 를 받아 순회 가능 
+
+```go
+// 전통적 방식의 순회
+for i := 0; i < len(arr); i++ {
+	//...
+}
+
+// range 활용 순회 
+for i, v := range arr {
+	//...
+}
+```
+
+배열 순회 예제 : [array2.go](section6/array2.go)
+
+#### 6.1.3. 배열의 값 복사
+
+- 배열을 복사하면 값 복사로 복사 됨
+
+배열 값 복사 예제 : [array3.go](section6/array3.go)
