@@ -35,5 +35,9 @@ func main() {
 	//section6.SliceBasic2()
 	//section6.SliceEx1()
 	//section6.SliceEx2()
-	section6.SliceEx3()
+	//section6.SliceEx3()
+	//section6.Map1()
+	//section6.Map2()
+	//section6.Map3()
+	section6.Map4()
 }

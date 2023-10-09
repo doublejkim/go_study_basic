@@ -405,3 +405,67 @@ sort.Sort(sort.Revers(sort.IntSlice(slice)))
 
 슬라이스 심화 예제 3 : [slice_ex3.go](section6/slice_ex3.go)
 
+### 6.4. 맵 (Map)
+
+#### 6.4.1. 맵 - 선언과 사용
+
+- Key-Value 형태로 자료 저장
+- 레퍼런스 타입 (참조타입) 
+- 비교 연산자 사용 불가능 (레퍼런스 타입 이므로)
+- make 함수 및 축약(리터럴) 초기화 가능
+- 순서 보장되지 않음 
+- 특징
+  1. Key 를 사용할때는 레퍼런스 타입은 사용 불가능
+  2. Value 는 모든 타입 사용 가능 
+
+> [Golang 스펙 - Map types](https://go.dev/ref/spec#Map_types)
+ 
+맵의 선언과 사용 예제 : [map1.go](section6/map1.go)
+
+#### 6.4.2. 맵 - 순회 
+
+- `range` 키워드를 활용한 `for` 문으로 순회 가능
+- 맵은 순회할때 순서를 보장하지 않음
+
+맵의 순회 예제 : [map2.go](section6/map2.go)
+
+#### 6.4.3. 맵 - 값 추가 / 수정 / 삭제
+
+- 추가 : 기존에 없던 키에 데이터를 대입하면 Map 데이터 추가 
+- 수정 : 기존에 존재하는 키에 신규 데이터를 대입하면 Map 데이터 수정 
+- 삭제 : `delete` 함수를 이용하여 삭제 시킬 Map 과 Key 를 입력하면 데이터 삭제
+
+```go
+myMap := map[string]int {
+	"aaa": 10
+	"bbb": 20
+}
+
+myMap["ccc"] = 30 // 데이터 추가
+myMap["bbb"] = 77 // 데이터 수정 
+delete(myMap, "bbb") // 데이터 삭제 
+```
+
+맵 값 추가, 수정, 삭제 예제 : [map3.go](section6/map3.go)
+
+#### 6.4.4. Map 조회시 키가 존재하는지 여부 확인 
+
+- 맵에서 특정 키값에 대한 값을 획득시 존재 여부를 체크하는 값도 같이 받을 수 있음
+
+```go
+myMap := map[string]int {
+	"aaa": 10,
+	"bbb": 20,
+}
+
+if value, ok := myMap["ccc"]; ok {
+	//...
+} else {
+	// ...
+}
+
+```
+
+맵 조회시 키 존재 여부 확인 예제 : [map4.go](section6/map4.go)
+
+
