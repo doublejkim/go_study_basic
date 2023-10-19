@@ -39,5 +39,7 @@ func main() {
 	//section6.Map1()
 	//section6.Map2()
 	//section6.Map3()
-	section6.Map4()
+	//section6.Map4()
+	//section6.Pointer1()
+	section6.Pointer2()
 }

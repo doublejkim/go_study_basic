@@ -468,4 +468,40 @@ if value, ok := myMap["ccc"]; ok {
 
 맵 조회시 키 존재 여부 확인 예제 : [map4.go](section6/map4.go)
 
+### 6.5. 포인터 (Pointer)
 
+#### 6.5.1. 포인터
+
+- Golang : 포인터 지원 
+- 주소의 값은 직접 변경 불가능
+- 변수 선언시에 asterisk(`*`)를 사용하면 포인터 변수를 의미
+- `nil` 로 초기화
+
+> [Golang 스펙 - Pointer types](https://go.dev/ref/spec#Pointer_types)
+
+```go
+var a *int // nil 로 초기화
+var b *int = new(int) // 임의의 메모리 공간이 할당 됨 
+```
+
+- ampersand(`&`) 는 변수의 주소를 가리킴
+- 이미 선언되어서 사용되고있는 변수에 asterisk(`*`) 를 사용하면 역참조
+
+```go
+i := 7
+
+p1 := &i
+p2 := &i
+
+fmt.Println("i : ", i, ", &i : ", &i) // 7, 0x0100
+fmt.Println("*p1 : ", *p1, ", p1 : ", p1) // 7, 0x0100
+fmt.Println("*p1 : ", *p2, ", p1 : ", p2) // 7, 0x0100
+
+*p2 = 123 // p2 포인터 변수가 레퍼런스하고있는 메모리주소에 저장된 값을 변경
+
+fmt.Println("i : ", i, ", &i : ", &i) // 123, 0x0100
+fmt.Println("*p1 : ", *p1, ", p1 : ", p1) // 123, 0x0100
+fmt.Println("*p1 : ", *p2, ", p1 : ", p2) // 123, 0x0100
+```
+
+포인터 선언 및 참조 사용 예제 : [pointer1.go](section6/pointer1.go)
