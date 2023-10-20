@@ -1,6 +1,6 @@
 package main
 
-import "go_study_basic/section6"
+import "go_study_basic/section7"
 
 func main() {
 
@@ -41,5 +41,7 @@ func main() {
 	//section6.Map3()
 	//section6.Map4()
 	//section6.Pointer1()
-	section6.Pointer2()
+	//section6.Pointer2()
+	//section7.Func1()
+	section7.Func2()
 }

@@ -505,3 +505,124 @@ fmt.Println("*p1 : ", *p2, ", p1 : ", p2) // 123, 0x0100
 ```
 
 포인터 선언 및 참조 사용 예제 : [pointer1.go](section6/pointer1.go)
+
+## Section 7. 함수, Defer, Closure
+
+### 7.1. 함수 Basic
+
+#### 7.1.1. 함수 - 선언
+
+- `func` 키워드로 선언
+- 여러 개의 반환 값(return value) 사용 가능 
+
+```go
+func 함수명(매개변수) (반환타입 or 반환 값 변수명) : 반환 값 존재 
+func 함수명() (반환타입 or 반환 값 변수명) : 매개변수 없음, 반환 값 존재 
+func 함수명() : 매개변수 없음, 반환 값 없음
+```
+
+> [Golang 스펙 - Function types](https://go.dev/ref/spec#Function_types)
+
+#### 7.1.2. 함수 - 선언 및 매개변수, 리턴값 사용
+
+- 매개변수와 리턴값 사용 
+```go
+func myFunc() {
+	result := sum(3, 5)  // result : 8
+}
+
+func sum(a int, b int) int {
+    return a + b
+}
+```
+
+- 리턴값 여러개 사용
+- 가변인자 사용 가능 
+- 특정 리턴값을 생략하고 싶으면 밑줄(`_`) 로 생략 가능
+```go
+func myFunc() {
+
+	result1, result2 := PlusMinusTest(5) // result1 : 6, result2 : 4 
+	result3 := SumAll(1, 2, 3, 4, 5, 6, 7, 8, 9, 10) // result3 : 55
+}
+
+func PlusMinusTest(num int) (result1 int, result2 int) {
+	result1 = num + 1
+	result2 = num - 1
+	return
+}
+
+func SumAll(num ...int) int {
+	total := 0
+	for _, value := range num {
+		total += value
+	}
+	return total
+}
+```
+
+함수 선언 및 사용 예제 : [func1.go](section7/func1.go)
+
+#### 7.1.3. 함수 - 변수에 저장 (like function pointer)
+
+- C 언어의 함수 포인터처럼 함수명으로 레퍼런스가 가능함
+- 함수를 레퍼런스 할 수 있는 변수를 사용가능하므로 이 변수를 응용 가능
+- 함수의 매개변수로 사용하여 callback 으로 활용할수도 있음
+- 슬라이스나 맵에 저장하여 활용 가능 
+- 함수를 선언하지 않고 익명함수 사용가능 
+
+```go
+func myFunc() {
+	
+	fmt.Println("======================= Callback Test")
+	CallBackTest1(11, 22, TestSum)
+	
+	fmt.Println("======================= 슬라이스에 함수 저장 및 활용")
+	sliceFunc := []func(int, int) int{TestSum, TestMinus, TestMultiply, TestDivide}
+	for idx, f := range sliceFunc {
+		fmt.Println("idx : ", idx, " : ", f(9, 3))
+	}
+	
+	fmt.Println("======================= 맵에 함수 저장 및 활용")
+	mapFunc := map[string]func(int, int) int{
+		"sum":      TestSum, 
+		"multiply": TestMultiply,
+	}
+	
+	fmt.Println("call sum : ", mapFunc["sum"](10, 3))
+	fmt.Println("call multiply : ", mapFunc["multiply"](10, 3))
+	
+	fmt.Println("======================= 익명 함수 사용")
+	
+	annonymousFunc := func(a int) int {
+		return a * 2
+	}
+	
+	fmt.Println("annonymousFunc : ", annonymousFunc(30))
+
+}
+
+func TestSum(a int, b int) int { 
+	return a + b
+}
+
+func TestMinus(a int, b int) int {
+	return a - b
+}
+
+func TestMultiply(a int, b int) int {
+	return a * b
+}
+
+func TestDivide(a int, b int) int {
+	if b == 0 {
+		return 0
+	}
+	return a / b
+}
+
+func CallBackTest1(num1 int, num2 int, f func(int, int) int) {
+	fmt.Println("result call f : ", f(num1, num2))
+}
+```
+
