@@ -13,6 +13,11 @@ func Func1() {
 	result3 := SumAll(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
 	fmt.Println("result3 : ", result3)
 
+	slice1 := []int{5, 6, 7, 8}
+	result4 := SumAll(slice1...)
+
+	fmt.Println("result4 : ", result4)
+
 }
 
 func PlusMinusTest(num int) (result1 int, result2 int) {
@@ -28,5 +33,3 @@ func SumAll(num ...int) int {
 	}
 	return total
 }
-
-

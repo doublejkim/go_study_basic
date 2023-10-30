@@ -43,5 +43,6 @@ func main() {
 	//section6.Pointer1()
 	//section6.Pointer2()
 	//section7.Func1()
-	section7.Func2()
+	//section7.Func2()
+	section7.Func3()
 }

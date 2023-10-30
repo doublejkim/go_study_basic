@@ -544,6 +544,8 @@ func myFunc() {
 
 	result1, result2 := PlusMinusTest(5) // result1 : 6, result2 : 4 
 	result3 := SumAll(1, 2, 3, 4, 5, 6, 7, 8, 9, 10) // result3 : 55
+    slice1 := []int{5, 6, 7, 8}
+    result4 := SumAll(slice1...) // result4 : 26
 }
 
 func PlusMinusTest(num int) (result1 int, result2 int) {
@@ -563,7 +565,9 @@ func SumAll(num ...int) int {
 
 함수 선언 및 사용 예제 : [func1.go](section7/func1.go)
 
-#### 7.1.3. 함수 - 변수에 저장 (like function pointer)
+### 7.2. 함수 Advanced
+
+#### 7.2.1. 함수 - 변수에 저장 (like function pointer)
 
 - C 언어의 함수 포인터처럼 함수명으로 레퍼런스가 가능함
 - 함수를 레퍼런스 할 수 있는 변수를 사용가능하므로 이 변수를 응용 가능
@@ -594,11 +598,15 @@ func myFunc() {
 	
 	fmt.Println("======================= 익명 함수 사용")
 	
-	annonymousFunc := func(a int) int {
+	annonymousFunc1 := func(a int) int {
 		return a * 2
 	}
 	
-	fmt.Println("annonymousFunc : ", annonymousFunc(30))
+	fmt.Println("annonymousFunc1 : ", annonymousFunc1(30))
+
+    func(msg string) {
+        fmt.Println("anonymousFunc2. msg : ", msg)
+    }("anonymous test....")
 
 }
 
@@ -625,4 +633,17 @@ func CallBackTest1(num1 int, num2 int, f func(int, int) int) {
 	fmt.Println("result call f : ", f(num1, num2))
 }
 ```
+
+함수 선언 및 사용 예제 : [func1.go](section7/func2.go)
+
+#### 7.2.2. Defer 함수 (지연 호출 함수)
+
+- 함수가 끝나기 직전에 실행하는 기능
+- 다른언어(ex : java)의 finally 구문과 비슷하게 동작
+- 주로 리소스 반환, 열린 파일 닫기, Mutex 잠금 해제 등 
+
+
+
+
+
 

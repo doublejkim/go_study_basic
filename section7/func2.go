@@ -27,11 +27,15 @@ func Func2() {
 
 	fmt.Println("======================= 익명 함수 사용")
 
-	annonymousFunc := func(a int) int {
+	anonymousFunc1 := func(a int) int {
 		return a * 2
 	}
 
-	fmt.Println("annonymousFunc : ", annonymousFunc(30))
+	fmt.Println("anonymousFunc1 : ", anonymousFunc1(30))
+
+	func(msg string) {
+		fmt.Println("anonymousFunc2. msg : ", msg)
+	}("anonymous test....")
 
 }
 
