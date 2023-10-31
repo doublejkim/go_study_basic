@@ -634,7 +634,7 @@ func CallBackTest1(num1 int, num2 int, f func(int, int) int) {
 }
 ```
 
-함수 선언 및 사용 예제 : [func1.go](section7/func2.go)
+함수 선언 및 사용 예제 : [func2.go](section7/func2.go)
 
 #### 7.2.2. Defer 함수 (지연 호출 함수)
 
@@ -642,8 +642,96 @@ func CallBackTest1(num1 int, num2 int, f func(int, int) int) {
 - 다른언어(ex : java)의 finally 구문과 비슷하게 동작
 - 주로 리소스 반환, 열린 파일 닫기, Mutex 잠금 해제 등 
 
+```go
+// defer 기본적인 사용
+func ex_f1() {
+  fmt.Println("f1 : start!")
+  defer ex_f2()
+  fmt.Println("f1 : end!")
+}
+
+func ex_f2() {
+  fmt.Println("f2 : called!!!!!!")
+}
+
+func myFunc() {
+  ex_f1()
+
+// 실행결과
+// f1 : start!
+// f1 : end!
+// f2 : called!!!!!!
+	
+}
+```
+
+```go
+// defer 사용시 중첩함수를 사용하면 호출순서가 기대와 달라지니 주의
+func start(t string) string {
+  fmt.Println("start : ", t)
+  return t
+}
+
+func end(t string) {
+  fmt.Println("end : ", t)
+}
+
+func deferTest() {
+  defer end(start("b")) ///@@@ 
+  fmt.Println("in a")
+}
+// 실행결과
+// start :  b
+// in a
+// end :  b
+
+```
+
+defer 함수 선언 및 사용 예제 : [func3.go](section7/func3.go)
 
 
+#### 7.2.3. Closure
+
+- 함수 안에서 함수를 선언 및 정의할 수 있고, 바깥쪽 함수에 선언된 변수에도 접근할 수 있는 함수 
+- 익명함수 사용할 경우 함수를 변수에 할당해서 사용 가능 
 
 
+```go
+multiply := func(x, y int) int {
+  return x * y
+}
 
+r1 := multiply(5, 10)
+
+fmt.Println("r1 : ", r1)
+
+m, n := 5, 10
+sum := func(c int) int {
+  return m + n + c
+}
+
+r2 := sum(10)
+fmt.Println("r2 : ", r2)
+```
+
+- 잘못된 사용으로 남발하게 되면 자원 무분별하게 사용 
+
+```go
+func myFunc() {
+  cntFunc := increaseCnt()
+  
+  fmt.Println("test ", cntFunc()) // 1
+  fmt.Println("test ", cntFunc()) // 2
+  fmt.Println("test ", cntFunc()) // 3
+  fmt.Println("test ", cntFunc()) // 4
+  fmt.Println("test ", cntFunc()) // 5
+}
+
+func increaseCnt() func() int {
+  n := 0 // 지역변수 (캡쳐됨)
+  return func() int {
+    n += 1
+    return n
+  }
+}
+```
