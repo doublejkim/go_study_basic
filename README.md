@@ -735,3 +735,73 @@ func increaseCnt() func() int {
   }
 }
 ```
+
+## Section 8. 사용자 정의 타입, 구조체, 인터페이스 
+- 상태, 메소드 분리해서 정의 (결합성 없음)
+- 사용자 정의 타입 : 구조체, 인터페이스, 기본 타입(int, float, string...), 함수 
+- 구조체와 메소드 연결을 통해서 타 언어의 클래스 형식처럼 사용 가능
+
+### 8.1. type 키워드를 사용한 구조체선언, 기본타입 및 함수 재정의 
+
+#### 8.1.1. 구조체의 선언 및 기본적인 사용
+
+```go
+type Car struct {
+	name string
+	color string
+	price int
+	tax int
+}
+
+// Car 구조체와 연결한 함수
+func (c Car) Price() int {
+	return c.name + "'s Price : " + strconv.Itoa(c.price+c.tax)
+}
+
+// Car 구조체내부의 값을 변경하려는 목적이려면 주소전달 형식으로 연결 필요 
+func (c *Car) SetName(newName string) {
+	c.name = newName
+}
+
+func myFunc() {
+	bmw := Car{name: "520d", price: 50_000_000, color: "white", tax: 5_000_000}
+	fmt.Println( bmw.Price()) // 520d's Price : 55000000 
+	
+	bmw.SetName("아반떼") 
+	fmt.Println( bmw.Price()) // 아반떼's Price : 55000000
+}
+```
+
+구조체의 선언 및 기본적인 사용 예제 : [user_struct1.go](section8/user_struct1.go)
+
+#### 8.1.2. 기본타입의 재정의 타입
+- **무슨용도로 사용할까?**
+```go
+type cnt int
+
+func myFunc() {
+	var num cnt = 12
+	...
+}
+```
+
+#### 8.1.3. 함수의 재정의 타입
+```go
+type totCost func(int, int) int
+
+func describe(cnt int, price int, fn totCost) {
+	fmt.Printf("cnt : %d, price : %d, totalCost : %d", cnt, price, fn(cnt, price))
+}
+
+func myFunc() {
+	var orderPrice totCost
+	orderPrice = func(cnt int, price int) int {
+	    return (cnt * price) + 100_000	
+    }
+
+    describe(3, 5000, orderPrice) // cnt : 3, price : 5000, totalCost : 115000
+}
+```
+
+함수의 재정의 타입 사용 예제 : [user_struct2.go](section8/user_struct2.go)
+
