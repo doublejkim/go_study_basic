@@ -919,3 +919,97 @@ func Struct5() {
 	fmt.Println("   - width : ", car.detail.width)
 }
 ```
+
+### 8.3. 구조체 Advanced
+
+#### 8.3.1. 생성자 패턴 사용
+
+- 구조체 자체에서는 생성자를 지원하지 않음
+- 메소드를 만들어 해당 구조체의 포인터타입을 리턴하게 하여 생성자 처럼 사용 가능 
+
+```go
+type Account1 struct {
+	number   string
+	balance  float64
+	interest float64
+}
+
+// 생성자 패턴
+func NewAccount(number string, balance float64, interest float64) *Account {
+	return &Account{number, balance, interest}
+}
+
+func StructEx1() {
+
+    account1 := NewAccount("111-222", 1_200_000, 0.04)
+    fmt.Printf("account1 : %#v\n", account1)
+}
+```
+
+생성자 패턴 사용 예제 : [struct_ex1.go](section8/struct_ex1.go)
+
+#### 8.3.2. 구조체의 메소드 호출 - 값참조, 주소참조
+
+- 값 참조시에는 원래의 값 영향 받지 않음
+- 주소 참조시에는 원래의 값 영향 받음 
+
+구조체 메소드 호출 예제 : [struct_ex2.go](section8/struct_ex2.go)
+
+#### 8.3.3. 메소드 오버라이딩
+- 상속 관계의 구조체에서 상속받는 쪽(Child) 의 메소드 오버라이딩 가능 
+
+```go
+type Employee struct {
+	name   string
+	salary int
+	bonus  int
+}
+
+func (e Employee) Calculate() int {
+	fmt.Println("Employee's Calculate called!!")
+	return e.salary + e.bonus
+}
+
+func (e Executives) Calculate() int {
+	fmt.Println("Executives's Calculate called!!")
+	return e.salary + e.bonus + e.specialBonus
+}
+
+type Executives struct {
+	Employee
+	specialBonus int
+}
+
+func MyFunc() {
+	
+	ep1 := Employee{"kim", 2_000_000, 150_000}
+	ep2 := Employee{"park", 1_500_000, 200_000}
+	
+	ex1 := Executives{
+		Employee{"lee", 5_000_000, 150_000}, 200_000,
+	}
+	
+	fmt.Println("ep1 : ", ep1.Calculate())
+	fmt.Println("ep2 : ", ep2.Calculate())
+	
+	fmt.Println("ex1 : ", ex1.Calculate()) // Executives 리시버를 사용하는 메소드가 호출됨
+	
+// 호출 결과
+//Employee's Calculate called!!
+//ep1 :  2150000
+//Employee's Calculate called!!
+//ep2 :  1700000
+//Executives's Calculate called!!
+//ex1 :  5350000
+
+
+}
+```
+
+구조체 메소드 오버라이딩 예제 : [struct_ex3.go](section8/struct_ex3.go)
+
+> 참고 : Golang 에서 객체지향 개념과 대응되는 Keywords <br>
+> Encapsulation -> Packages <br>
+> Inheritance -> Composition <br>
+> Polymorphism -> Interfaces <br>
+> Abstraction -> Embedding <br>
