@@ -46,6 +46,11 @@ func main() {
 	//section7.Func2()
 	//section7.Func3()
 	//section7.Closure1()
-	section8.UserStruct1()
+	//section8.UserStruct1()
 	//section8.UserStruct2()
+	//section8.Struct1()
+	//section8.Struct2()
+	//section8.Struct3()
+	//section8.Struct4()
+	section8.Struct5()
 }

@@ -805,3 +805,117 @@ func myFunc() {
 
 함수의 재정의 타입 사용 예제 : [user_struct2.go](section8/user_struct2.go)
 
+### 8.2. 구조체 (struct)
+
+#### 8.2.1. 구조체 기초
+- 필드는 갖지만 메서드는 갖지 않음
+- 리시버를 통해 메소드와 연결 
+- 구조체 -> 구조체 선언 -> 구조체 인스턴스(리시버) 
+
+```go
+type Account struct {
+	number   string
+	balance  float64
+	interest float64
+}
+
+func (a Account) Caculate() float64 {
+	return a.balance + (a.balance * a.interest)
+}
+
+func myFunc() {
+	kim := Account{number: "111-111", balance: 10_000_000, interest: 0.015}
+	lee := Account{number: "111-222", balance: 12_000_000}
+	
+	fmt.Println("kim Calculate : ", int(kim.Caculate())) // kim Calculate :  10150000
+	fmt.Println("lee Calculate : ", int(lee.Caculate())) // lee Calculate :  12000000
+	
+	// 추가적인 선언 방법. 동적할당 
+	//선언 방법1 
+	var kim2 *Account = new(Account)
+	kim2.number = "111-111"
+	kim2.balance = 10_000_000
+	kim2.interest = 0.015
+	
+	// 선언 방법2 
+	hong2 := &Account{number: "222-222", balance: 15_000_000, interest: 0.04}
+	// 선언 방법3 
+	lee2 := new(Account)
+	lee2.number = "333-333"
+	lee2.balance = 130_000_000
+	lee2.interest = 0.025
+}
+```
+
+구조체 선언 및 사용 1 : [struct1.go](section8/struct1.go)
+구조체 선언 및 사용 2 : [struct2.go](section8/struct2.go)
+
+- 익명 구조체 사용도 가능 
+
+```go
+        // 구조체 익명 선언 
+	car1 := struct{ name, color string }{"520d", "red"}
+```
+
+익명 구조체 : [struct3.go](section8/struct3.go)
+
+#### 8.2.2. reflect 를 활용한 구조체 메타 정보 획득
+- Type 획득이후 각 Field 에 접근하여 `Tag`, `Name`, `Type` 등을 확인 가능
+- Java reflection 개념과 유사
+
+```go
+type Car struct {
+	name    string "차량명"
+	color   string "색상"
+	company string "제조사"
+}
+
+func myFunc() {
+	tag := reflect.TypeOf(Car{})
+	
+	for i := 0; i<tag.NumField(); i++ {
+		fmt.Println(tag.Field(i).Tag, tag.Field(i).Name, tag.Field(i).Type)
+    }
+
+	//출력결과
+    //차량명 name string
+    //색상 color string
+    //제조사 company string
+	
+}
+```
+
+#### 8.2.3. 중첩 구조체
+- 구조체 내에 구조체 타입을 사용 
+
+```go
+type Car struct {
+	name    string "차량명"
+	color   string "색상"
+	company string "제조사"
+	detail  spec   "상세"
+}
+
+type spec struct {
+	length int "전장"
+	height int "전고"
+	width  int "전축"
+}
+
+func Struct5() {
+	
+	car := Car5{
+		"520d", 
+		"silver", 
+		"bmw", 
+		spec{4_000, 1_000, 2_000},
+	}
+	fmt.Println("name : ", car.name)
+	fmt.Println("color : ", car.color)
+	fmt.Println("company : ", car.company)
+	fmt.Printf("detail : %#v\n", car.detail)
+	fmt.Println("   - length : ", car.detail.length)
+	fmt.Println("   - height : ", car.detail.height)
+	fmt.Println("   - width : ", car.detail.width)
+}
+```
