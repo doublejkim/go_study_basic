@@ -1013,3 +1013,122 @@ func MyFunc() {
 > Inheritance -> Composition <br>
 > Polymorphism -> Interfaces <br>
 > Abstraction -> Embedding <br>
+
+### 8.3. 인터페이스 (Interface)
+
+#### 8.3.1. 인터페이스 기초 
+
+- 객체의 동작을 표현. 메소드의 집합
+- 단순히 동작에 대한 방법만 표시
+- 추상화 제공
+- 인터페이스의 메소드를 구현한 타입은 인터페이스로 사용 가능
+- 아무것도 정의되지 않은 interface 타입은 `nil` 을 리턴함
+- interface 에 명시되어있는 구조체의 메소드만 구현하고있다면 구현한것으로 간주하고 interface 를 사용가능 
+
+```go
+type Dog struct {
+	name   string
+	weight int
+}
+
+// bite method 구현
+func (d Dog) bite() {
+	fmt.Println(d.name, " bites!!")
+}
+
+type Behavior interface {
+	bite()
+}
+
+func Interface2() {
+	
+	fmt.Println("=================== 인터페이스 사용 1")
+	dog1 := Dog{"poll", 10}
+	var interface1 Behavior
+	interface1 = dog1
+	interface1.bite()
+	
+	fmt.Println("=================== 인터페이스 사용 2")
+	dog2 := Dog{"marry", 13}
+	interface2 := Behavior(dog2)
+	interface2.bite()
+	
+	fmt.Println("=================== 인터페이스 사용 - 배열로 사용해보기 1")
+	inters := []Behavior{dog1, dog2}]
+    for idx, _ := range inters {
+		inters[idx].bite()
+	}
+	
+	fmt.Println("=================== 인터페이스 사용 - 배열로 사용해보기 2")
+	for _, val := range inters {
+		val.bite()
+	}
+}
+```
+
+인터페이스 사용 예제 1 : [interface1.go](section8/interface1.go) <br>
+인터페이스 사용 예제 2 : [interface2.go](section8/interface2.go)
+
+#### 8.3.2. 덕 타이핑 (Duck typing)
+- 각 값이나 인스턴스의 실제 타입은 상관하지 않고 구현된 메서드로만 타입을 판단하는 방식
+- "만약 어떤 새가 오리처럼 걷고, 헤엄치고, 꽥꽥거리는 소리를 낸다면 나는 그 새를 오리라 부르겠다" - Duck test..
+
+```go
+type Dog struct {
+	name   string
+	weight int
+}
+
+type Cat struct {
+	name   string
+	weight int
+}
+
+func (d Dog) bite() {
+	fmt.Println(d.name, " - Dog bite!!!")
+}
+
+func (d Dog) sounds() {
+	fmt.Println(d.name, " - Dog barks!!!")
+}
+
+func (d Dog) dogFeature() {
+	fmt.Println(d.name, " - dogs are loyal")
+}
+
+func (d Cat) bite() {
+	fmt.Println(d.name, " - Cat crawls!!!")
+}
+
+func (d Cat) sounds() {
+	fmt.Println(d.name, " - Cat cries!!!")
+}
+
+func (d Cat) catFeature() {
+	fmt.Println(d.name, " - cats are independent")
+}
+
+type Behavior interface {
+	bite()
+	sounds()
+}
+
+func act(animal Behavior1) {
+	animal.bite()
+	animal.sounds()
+}
+
+func Interface() {
+
+	dog := Dog{"poll", 10}
+	cat := Cat{"nabi", 3}
+
+	animals := []Behavior{dog, cat}
+
+	for _, val := range animals {
+		act(val)
+	}
+
+}
+
+```
