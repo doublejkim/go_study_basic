@@ -56,5 +56,8 @@ func main() {
 	//section8.StructEx1()
 	//section8.StructEx2()
 	//section8.StructEx3()
-	section8.StructEx4()
+	//section8.StructEx4()
+	//section8.InterfaceEx1()
+	//section8.InterfaceEx2()
+	section8.InterfaceEx3()
 }

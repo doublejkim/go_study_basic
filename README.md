@@ -1132,3 +1132,95 @@ func Interface() {
 }
 
 ```
+
+인터페이스 사용 예제 3 : [interface3.go](section8/interface3.go)
+
+#### 8.3.3. 빈 인터페이스 사용 
+- 빈 인터페이스 : 함수 배개변수, 리턴 값, 구조체 필드 등으로 사용 가능 -> 어떤 타입으로도 변환 가능
+- 모든 타입을 나타내기 위해 빈 인터페이스 사용
+
+```go
+func printContents(v interface{}) {
+	fmt.Printf("Type : (%T)\n", v)
+	fmt.Println("v : ", v)
+}
+
+func myFunc() {
+
+	var a interface{}
+
+	a = 7.5
+	printContents(a)
+
+	a = "Golang.."
+	printContents(a)
+
+	a = true
+	printContents(a)
+
+	a = nil
+	printContents(a)
+
+}
+```
+
+빈 인터페이스 기본적 사용 예제 : [interface_ex1.go](section8/interface_ex1.go)
+
+#### 8.3.4. Type Assertion
+- 실행(런타임) 시에는 인터페이스에 할당한 변수는 실제 타입으로 변환후 사용 하는 경우
+- 인터페이스(타입) -> 형 변환 
+- `interfaceVal.(type)` 로 형변환 가능하며 리턴타입 2개 리턴함 `변환된 값(변환이가능하다면..), 변환가능여부(bool)`
+- switch 문에서 구분이 가능함 
+
+```go
+func InterfaceEx2() {
+
+	fmt.Println("=========== Type Assertion 테스트")
+
+	var a interface{} = 15
+
+	b := a
+	c := a.(int)
+	//d := a.(float64) // panic : interface conversion
+
+	fmt.Println("a : ", a)
+	fmt.Println("reflect.TypeOf(a)", reflect.TypeOf(a))
+	fmt.Println("b : ", b)
+	fmt.Println("c : ", c)
+	//fmt.Println("d : ", d)
+
+	if v, ok := a.(int); ok {
+		fmt.Println("conversion 1 v : ", v)
+	}
+
+	if v, ok := a.(float64); ok {
+		fmt.Println("conversion 2 v : ", v)
+	}
+}
+
+func checkType(arg interface{}) {
+
+	switch arg.(type) {
+	case bool:
+		fmt.Println("This is a bool : ", arg)
+	case int, int8, int16, int32, int64:
+		fmt.Println("This is a int : ", arg)
+	case float32, float64:
+		fmt.Println("This is a float : ", arg)
+	case string:
+		fmt.Println("This is a string : ", arg)
+	case nil:
+		fmt.Println("This is a nil : ", arg)
+	default:
+		fmt.Println("Unknown type... : ", arg)
+	}
+}
+
+func InterfaceEx3() {
+	checkType(true)
+	checkType(12)
+	checkType(12.3)
+	checkType("what?")
+	checkType(nil)
+}
+```
