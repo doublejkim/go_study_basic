@@ -1224,3 +1224,97 @@ func InterfaceEx3() {
 	checkType(nil)
 }
 ```
+
+Type Assertion 예제 : [interface_ex2.go](section8/interface_ex2.go)
+
+## Section 9. Go 병행처리 - 고루틴, 채널, 동기화
+
+### 9.1. 고루틴 (Goroutine)
+
+#### 9.1.1. 고루틴 기초
+- 타 언어의 스레드(Thread)와 비슷한 기능
+- 생성 방법 매우 간단, 리소스 매우 적게 사용 
+- 비동기적 함수 루틴 실행 (매우 적은 용량 차지) -> 채널을 통한 통신 가능
+- 공유메모리 사용 시에 정확한 동기화 코딩 필요
+
+고루틴 예제 1 : [goroutine1.go](section9/goroutine1.go) <br>
+고루틴 예제 2 : [goroutine2.go](section9/goroutine2.go)
+
+```go
+// goroutine 예제 1 
+func exe1(cnt int) {
+	for i := 0; i < cnt; i++ {
+		fmt.Println("exe 1 [", i, "] : ", time.Now())
+		time.Sleep(500 * time.Millisecond)
+	}
+}
+
+func exe2(cnt int) {
+	for i := 0; i < cnt; i++ {
+		fmt.Println("exe 2 [", i, "] : ", time.Now())
+		time.Sleep(500 * time.Millisecond)
+	}
+}
+
+func exe3(cnt int) {
+	for i := 0; i < cnt; i++ {
+		fmt.Println("exe 3 [", i, "] : ", time.Now())
+		time.Sleep(500 * time.Millisecond)
+	}
+}
+
+func myFunc() {
+	cnt := 10
+	go exe1(cnt)
+	go exe2(cnt)
+	exe3(cnt)
+}
+
+```
+
+```go
+// goroutine 예제 2
+func exe(name int) {
+	r := rand.Intn(100)
+	fmt.Println(name, " start : ", time.Now())
+	for i := 0; i < 100; i++ {
+		fmt.Println(name, " >>>>> ", r, i)
+	}
+	fmt.Println(name, " end : ", time.Now())
+}
+
+func Goroutine2() {
+
+	runtime.GOMAXPROCS(runtime.NumCPU())                        // 현재 시스템의 cpu 코어 개수 반환후 설정
+	fmt.Println("Current System CPU : ", runtime.GOMAXPROCS(0)) // 설정값 출력
+
+	fmt.Println("Main Routine Start : ", time.Now())
+	for i := 0; i < 100; i++ {
+		go exe(i)
+	}
+
+	time.Sleep(3 * time.Second)
+	fmt.Println("Main Routine End : ", time.Now())
+}
+```
+
+- Closure 도 goroutine 사용가능
+- 반복문안에 있는 클로저는 일반적으로 즉시실행, but 고루틴 클로저는 가장 나중에 실행 (반복문 종료 후 실행)
+
+```go
+func myFunc() {
+
+	runtime.GOMAXPROCS(1) // 1개만 사용하겠다고 선언
+
+	s := "Goroutine Closure"
+
+	for i := 0; i < 1000; i++ {
+		func(n int) {
+			fmt.Println(s, n, " - ", time.Now())
+		}(i) // 반복문 클로저는 일반적으로 즉시 실행. But, 고루틴 클로저는 가장 나중에 실행 (반복문종료 후)
+	}
+
+	time.Sleep(3 * time.Second)
+}
+
+```

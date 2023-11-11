@@ -1,6 +1,6 @@
 package main
 
-import "go_study_basic/section8"
+import "go_study_basic/section9"
 
 func main() {
 
@@ -59,5 +59,8 @@ func main() {
 	//section8.StructEx4()
 	//section8.InterfaceEx1()
 	//section8.InterfaceEx2()
-	section8.InterfaceEx3()
+	//section8.InterfaceEx3()
+	//section9.Goroutine1()
+	//section9.Goroutine2()
+	section9.Goroutine3()
 }
