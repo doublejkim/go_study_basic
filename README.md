@@ -1318,3 +1318,177 @@ func myFunc() {
 }
 
 ```
+
+### 9.2. 채널 (Channel)
+
+#### 9.2.1. 채널 기초 
+
+- 고루틴 간의 상호 정보(데이터) 교환 및 실행 흐름 동기화 위해 사용 : 채널(동기식, 레퍼런스 타입)
+- 실행 흐름 제어 가능 (동기, 비동기) -> 일반 변수로 선언후 사용 가능 
+- 데이터 전달 자료형 선언 후 사용 가능 (지정 된 타입만 주고 받을 수 있음)
+- `interface{}` 전달을 통해서 자료형 상관없 전송 및 수신 가능 
+- 포인터 (슬라이스, 맵) 등을 전달시에는 주의 -> 동기화 사용 (Mutex)
+- 멀티 프로세싱 처리에서 deadlock 주의  
+- `<-` , `->` : `채널 <- 데이터 // 송신` , ` <- 채널 // 수신 `
+
+```go
+func work1(v chan int) {
+	fmt.Println("Work1 : S ---> ", time.Now())
+	time.Sleep(1 * time.Second)
+	fmt.Println("Work1 : E ---> ", time.Now())
+	v <- 1
+}
+
+func work2(v chan int) {
+	fmt.Println("Work2 : S ---> ", time.Now())
+	time.Sleep(1 * time.Second)
+	fmt.Println("Work2 : E ---> ", time.Now())
+	v <- 2
+}
+
+func GoChannel1() {
+
+	fmt.Println("myFunc : S ---> ", time.Now())
+
+	//var c chan int
+	//c = make(chan int) // 이렇게 사용해도 문제 없음
+	v := make(chan int) // int 형 채널 선언
+
+	go work1(v)
+	go work2(v)
+
+	<-v
+	<-v
+	fmt.Println("myFunc : E ---> ", time.Now())
+
+}
+```
+
+채널 기본 사용 예제 : [gochannel1.go](section9/gochannel1.go)
+
+#### 9.2.2. 채널로 값 주고 받기 
+
+- 채널을 사용하면 고루틴에서의 값을 받을 수 있음
+- 채널로 값을 받을때는 고루틴에서 종료된 순서대로 수신 됨
+- 동기식 이라서 채널 수신을 받을때 까지 대기 
+
+```go
+func rangeSum(rg int, c chan int) {
+
+	sum := 0
+
+	for i := 0; i <= rg; i++ {
+		sum += i
+	}
+	c <- sum
+}
+
+func MyFunc() {
+
+	c := make(chan int)
+	go rangeSum(1000, c)
+	go rangeSum(7000, c)
+	go rangeSum(5000, c)
+
+	// 순서대로 데이터 수신(동기) : 채널에서 값 수신 완료 될 때까지 대기
+	result1 := <-c
+	result2 := <-c
+	result3 := <-c
+
+	fmt.Println("result1 : ", result1)
+	fmt.Println("result2 : ", result2)
+	fmt.Println("result3 : ", result3)
+}
+```
+
+채널로 값 주고 받기 예제 : [gochannel2.go](section9/gochannel2.go)
+
+#### 9.2.3. 채널 버퍼 사용 
+
+- 버퍼를 사용하여 비동기식으로 사용가능 
+- 버퍼 : 발신 -> 가득차면 대기, 비어있으면 작동, 수신 -> 비어있으면 대기, 가득차있으면 작동 
+
+```go
+func MyFunc() {
+	// 비동기 : 버퍼사용
+
+	runtime.GOMAXPROCS(1)
+	ch := make(chan bool, 2) // 채널 버퍼의 용량을 설정 가능.
+	cnt := 12
+
+	go func() {
+		for i := 0; i < cnt; i++ {
+			ch <- true
+			fmt.Println("Go : ", i)
+		}
+	}()
+
+	for i := 0; i < cnt; i++ {
+		<-ch
+		fmt.Println("Main : ", i)
+	}
+}
+```
+
+채널 버퍼 사용 예제 1 : [gochannel3.go](section9/gochannel3.go) <br>
+채널 버퍼 사용 예제 2 : [gochannel4.go](section9/gochannel4.go)
+
+#### 9.2.4. 채널에서 range 로 값 획득 
+
+- 채널을 사용 후 Close 해야하는 것이 일반적 -> 닫힌 채널에 값 전송시 panic 발생 
+- Range 를 사용하면 해당 채널이 Close 될때까지 대기하고 값을 꺼내옴 
+
+```go
+func MyFunc() {
+
+	// Close : 채널 닫기. 주의 : 닫힌 채널에 값 전송시 panic 발생
+	// Range : 채널 안에서 값을 꺼냄 (순회), 채널 닫아야(Close) 반복문 종료 
+	//          -> 채널이 열려있고 값 전송하지 않으면 계속 대기
+
+	ch := make(chan bool)
+	go func() {
+		for i := 0; i < 5; i++ {
+			ch <- true
+		}
+		close(ch) // 5회 채널에 값 전송 후 채널 닫기
+	}()
+
+	for i := range ch { // 채널에서 값을 꺼내옴 (채널 close 될때 까지)
+		fmt.Println("i : ", i)
+	}
+}
+```
+
+채널에서 ranage 로 값 획득 예제 : [gochannel5.go](section9/gochannel5.go)
+
+#### 9.2.5. 채널에서 값을 가져올 수 있는 상태 확인
+
+- `val, ok` 형태로 채널에서 수신한 값과 채널에서 값을 수신할 수 있는 여부 값을 동시에 리턴 가능
+- 조건문에서도 `ok` 값으로 활용 가능 
+
+```go
+func MyFunc() {
+
+	ch := make(chan string)
+	go func() {
+		for i := 0; i < 3; i++ {
+			ch <- "Good~!!!"
+		}
+	}()
+
+	val1, ok1 := <-ch
+	fmt.Println("val1 : ", val1, ", ok1 : ", ok1)
+
+	val2, ok2 := <-ch
+	fmt.Println("val2 : ", val2, ", ok2 : ", ok2)
+
+	val3, ok3 := <-ch
+	fmt.Println("val3 : ", val3, ", ok3 : ", ok3)
+	
+	// close(ch)
+	// _, ok4 := <-ch // ok4 는 false 
+
+}
+```
+
+채널에서 값을 가져올 수 있는 상태 확인 예제 : [gochannel6.go](section9/gochannel6.go)

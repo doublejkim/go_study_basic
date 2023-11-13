@@ -62,5 +62,11 @@ func main() {
 	//section8.InterfaceEx3()
 	//section9.Goroutine1()
 	//section9.Goroutine2()
-	section9.Goroutine3()
+	//section9.Goroutine3()
+	//section9.GoChannel1()
+	//section9.GoChannel2()
+	//section9.GoChannel3()
+	//section9.GoChannel4()
+	//section9.GoChannel5()
+	section9.GoChannel6()
 }
