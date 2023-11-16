@@ -1319,9 +1319,9 @@ func myFunc() {
 
 ```
 
-### 9.2. 채널 (Channel)
+### 9.2. 채널 (Channel) 기초
 
-#### 9.2.1. 채널 기초 
+#### 9.2.1. 채널 
 
 - 고루틴 간의 상호 정보(데이터) 교환 및 실행 흐름 동기화 위해 사용 : 채널(동기식, 레퍼런스 타입)
 - 실행 흐름 제어 가능 (동기, 비동기) -> 일반 변수로 선언후 사용 가능 
@@ -1492,3 +1492,76 @@ func MyFunc() {
 ```
 
 채널에서 값을 가져올 수 있는 상태 확인 예제 : [gochannel6.go](section9/gochannel6.go)
+
+### 9.3. 채널 (Channel) 심화 
+
+#### 9.3.1. 채널 : 발신전용, 수신전용
+
+- 함수 등의 매개 변수에 수신 및 발신 전용 채널 지정 가능 
+- 전용 채널 설정 후 방향이 다를 경우 예외 발생 (panic)
+- 발신 전용 `channel <- 데이터형` 
+- 수신 전용 `<- channel`
+
+```go
+func sendOnly(c chan<- int, cnt int) {
+
+	for i := 0; i < cnt; i++ {
+		c <- i
+	}
+
+	c <- 777
+	//fmt.Println(<-c) // 에러 발생
+}
+
+func receiveOnly(c <-chan int) {
+	for i := range c {
+		fmt.Println("received : ", i)
+	}
+
+	fmt.Println(<-c)
+}
+
+func MyFunc() {
+
+	c := make(chan int)
+
+	go sendOnly(c, 10) // 발신 전용
+	go receiveOnly(c)  // 수신 전용
+
+	time.Sleep(2 * time.Second)
+}
+```
+
+발신전용, 수신전용 채널 예제 : [gochannel_ex1.go](section9/gochannel_ex1.go)
+
+#### 9.3.2. 발신전용, 수신전용 채널의 함수에서의 활용
+
+- 채널 또한 함수의 반환 값으로 사용 가능
+
+```go
+func sum(cnt int) <-chan int {
+	sum := 0
+	tot := make(chan int)
+	go func() {
+		for i := 0; i < cnt; i++ {
+			sum += i
+		}
+		tot <- sum
+	}()
+	return tot
+}
+
+func MyFunc() {
+
+	c := sum(100)
+	// c<- 200 // error 발생 
+	fmt.Println("c : ", <-c)
+}
+```
+
+함수에서 리턴타입으로 활용하는 수신전용 채널타입 예제 : [gochannel_ex2.go](section9/gochannel_ex2.go), [gochannel_ex3.go](section9/gochannel_ex3.go)
+
+#### 9.3.3. 채널 셀렉트 사용 (channel select)
+
+- 여러 채널을 손쉽게 사용할 수 있는 select 분기문 
+- 채널에 값이 수신되면 해당 case 문실행 (switch 분기문과 유사함)

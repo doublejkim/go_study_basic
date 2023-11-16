@@ -68,5 +68,9 @@ func main() {
 	//section9.GoChannel3()
 	//section9.GoChannel4()
 	//section9.GoChannel5()
-	section9.GoChannel6()
+	//section9.GoChannel6()
+	//section9.GoChannelEx1()
+	//section9.GoChannelEx2()
+	//section9.GoChannelEx3()
+	section9.GoChannelEx4()
 }
