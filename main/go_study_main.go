@@ -72,5 +72,10 @@ func main() {
 	//section9.GoChannelEx1()
 	//section9.GoChannelEx2()
 	//section9.GoChannelEx3()
-	section9.GoChannelEx4()
+	//section9.GoChannelEx4()
+	//section9.GoSync1()
+	//section9.GoSync2()
+	//section9.GoSync3()
+	//section9.GoSync4()
+	section9.GoSync5()
 }

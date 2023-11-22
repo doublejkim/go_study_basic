@@ -1565,3 +1565,264 @@ func MyFunc() {
 
 - 여러 채널을 손쉽게 사용할 수 있는 select 분기문 
 - 채널에 값이 수신되면 해당 case 문실행 (switch 분기문과 유사함)
+
+```go
+func MyFunc() {
+
+	ch1 := make(chan int)
+	ch2 := make(chan string)
+
+	go func() {
+		for {
+			ch1 <- 11
+			time.Sleep(500 * time.Millisecond)
+		}
+	}()
+
+	go func() {
+		for {
+			ch2 <- "Hello"
+			time.Sleep(700 * time.Millisecond)
+		}
+	}()
+
+	go func() {
+		for {
+			select {
+			case num := <-ch1:
+				fmt.Println("ch1 : ", num)
+			case str := <-ch2:
+				fmt.Println("ch2 : ", str)
+			}
+		}
+	}()
+
+	time.Sleep(10 * time.Second)
+}
+```
+
+### 9.4. 동기화 기초 
+
+#### 9.4.1. 동기화를 사용하지 않는 고루틴 
+
+- 동기화를 사용하지 않으면 의도했던 제어가 되지 않음 
+
+```go
+type count struct {
+	num int
+}
+
+func (c *count) increment() {
+	c.num += 1
+}
+
+func (c *count) result() {
+	fmt.Println(c.num)
+}
+
+func MyFunc() {
+
+	// 시스템 전체 CPU 사용
+	runtime.GOMAXPROCS(runtime.NumCPU())
+
+	c := count{num: 0}
+	done := make(chan bool)
+
+	for i := 1; i < 10_000; i++ {
+		go func() {
+			c.increment()
+			done <- true
+			runtime.Gosched() // cpu 양보
+		}()
+	}
+
+	for i := 1; i < 10_000; i++ {
+		<-done
+	}
+
+	c.result() // 실행할 마다 결과가 달라짐
+
+}
+```
+
+동기화 처리가 되지 않은 동작 예제 : [go_sync1.go](section9/gochannel_ex1.go)
+
+#### 9.4.2. 동기화 객체 사용하여 고루틴 사용 (Mutex)
+
+- Mutex 의 `Lock()`, `Unlock()` 을 사용하면 동기화 사용 가능 
+
+```go
+type count struct {
+	num   int
+	mutex sync.Mutex
+}
+
+func (c *count) increment() {
+	c.mutex.Lock() // 스레드들로부터 연산 보호
+	c.num += 1
+	c.mutex.Unlock()
+}
+
+func (c *count) result() {
+	fmt.Println(c.num)
+}
+
+func GoSync() {
+
+	// 시스템 전체 CPU 사용
+	runtime.GOMAXPROCS(runtime.NumCPU())
+
+	c := count{num: 0}
+	done := make(chan bool)
+
+	for i := 1; i < 10_000; i++ {
+		go func() {
+			c.increment()
+			done <- true
+			runtime.Gosched() // cpu 양보
+		}()
+	}
+
+	for i := 1; i < 10_000; i++ {
+		<-done
+	}
+
+	c.result()
+
+}
+```
+
+Mutex 를 사용한 동기화 예제 : [go_sync2.go](section9/go_sync2.go)
+
+#### 9.4.3. 읽기 쓰기 Mutex 사용 
+- 특정 로직이 얼마동안 수행될지 모르는 상황에서 특정 값을 공유하며 쓰기/읽기를 한다면 타이밍 이슈 발생
+
+```go
+func MyFunc() {
+
+	data := 0
+
+	go func() {
+		for i := 1; i <= 10; i++ {
+			data += 1
+			fmt.Println("Write : data : ", data)
+			time.Sleep(200 * time.Millisecond)
+		}
+	}()
+
+	go func() {
+		for i := 1; i <= 10; i++ {
+			fmt.Println("Read 1 : data : ", data)
+			time.Sleep(1 * time.Second)
+		}
+	}()
+
+	go func() {
+		for i := 1; i <= 10; i++ {
+			fmt.Println("Read 2 : data : ", data)
+			time.Sleep(1 * time.Second)
+		}
+	}()
+
+	time.Sleep(10 * time.Second)
+}
+```
+
+특정 변수에 동시에 읽기쓰기 예제 : [go_sync3.go](section9/go_sync3.go)
+
+
+- Read Lock : 읽기 락 끼리는 서로를 막지 않음. 하지만 읽기시도 중에 값이 변경되면 안되므로 쓰기 락은 막음 
+- Write Lock : 쓰기 시도 중에 다른 곳에서 이전 값을 읽으면 안 되고, 다른 곳에서 값을 바꾸면 안 되므로 읽기, 쓰기 락 모두 막음 
+
+```go
+func MyFunc() {
+
+	runtime.GOMAXPROCS(runtime.NumCPU())
+
+	data := 0
+	mutex := new(sync.RWMutex)
+
+	go func() {
+		for i := 1; i <= 10; i++ {
+			mutex.Lock()
+			data += 1
+			fmt.Println("Write : data : ", data)
+			time.Sleep(200 * time.Millisecond)
+			mutex.Unlock()
+		}
+	}()
+
+	go func() {
+		for i := 1; i <= 10; i++ {
+			mutex.RLock()
+			fmt.Println("Read 1 : data : ", data)
+			time.Sleep(1 * time.Second)
+			mutex.RUnlock()
+		}
+	}()
+
+	go func() {
+		for i := 1; i <= 10; i++ {
+			mutex.RLock()
+			fmt.Println("Read 2 : data : ", data)
+			time.Sleep(1 * time.Second)
+			mutex.RUnlock()
+		}
+	}()
+
+	time.Sleep(15 * time.Second)
+}
+```
+
+쓰기, 읽기 락 사용 예제 : [go_sync4.go](section9/go_sync4.go)
+
+#### 9.4.4. Mutext 조건 변수 사용
+- 대기하고 있는 객체를 하나 또는 여러 개를 깨울때 사용 
+- `NewCond(l Locker)` : 조건 변수 생성 
+- `Wait()` : 고루틴 실행을 멈추고 대기
+- `Signal()` : 대기하고 있는 고루틴 하나만 깨움
+- `Broadcast()` : 대기하고 있는 모든 고루틴을 깨움 
+
+```go
+func MyFunc() {
+
+	runtime.GOMAXPROCS(runtime.NumCPU())
+
+	var mutex = new(sync.Mutex)
+	var condition = sync.NewCond(mutex)
+
+	c := make(chan int, 5) // 비동기 버퍼 채널
+
+	for i := 0; i < 5; i++ {
+		go func(n int) {
+			mutex.Lock()
+			c <- 777
+			fmt.Println("Goroutine Waiting... : ", n)
+			condition.Wait()
+			fmt.Println("Waiting End : ", n)
+			mutex.Unlock()
+		}(i)
+	}
+
+	for i := 0; i < 5; i++ {
+		<-c
+	}
+
+	/*for i := 0; i < 5; i++ {
+		mutex.Lock()
+		fmt.Println("Wake Goroutine(Signal) : ", i)
+		condition.Signal() // 한개씩 깨움 (모든 고루틴 생성 후)
+		mutex.Unlock()
+	}*/
+
+	mutex.Lock()
+	fmt.Println("Wake Goroutine(Broadcast)")
+	condition.Broadcast()
+	mutex.Unlock()
+
+	time.Sleep(2 * time.Second)
+}
+```
+
+Mutext 조건변수 사용 예제 : [go_sync5.go](section9/go_sync5.go)
+
