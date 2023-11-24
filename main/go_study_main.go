@@ -77,5 +77,9 @@ func main() {
 	//section9.GoSync2()
 	//section9.GoSync3()
 	//section9.GoSync4()
-	section9.GoSync5()
+	//section9.GoSync5()
+	//section9.GoSyncEx1()
+	//section9.GoSyncEx2()
+	//section9.GoSyncEx3()
+	section9.GoSyncEx4()
 }

@@ -1826,3 +1826,73 @@ func MyFunc() {
 
 Mutext 조건변수 사용 예제 : [go_sync5.go](section9/go_sync5.go)
 
+### 9.5. 동기화 고급
+
+#### 9.5.1. 함수를 한번만 실행 (Once)
+- `sync.Once`
+- `func(*Once) Do(f func())` : 함수를 한번만 실행 
+
+```go
+func onceTest() {
+	fmt.Println("Once Test!!!!!!!!!!!!!!") // 한 번만 실행할 코드 
+}
+
+func MyFunc() {
+
+	runtime.GOMAXPROCS(runtime.NumCPU())
+
+	once := new(sync.Once)
+
+	for i := 0; i < 5; i++ {
+		go func(n int) {
+			fmt.Println("Goroutine : i : ", n)
+			once.Do(onceTest)
+		}(i)
+	}
+
+	time.Sleep(3 * time.Second)
+}
+```
+
+동기화 Once 사용 예제 : [go_sync_ex1.go](section9/go_sync_ex1.go)
+
+#### 9.5.2. 대기그룹(WaitGroup) 사용 
+- 고루틴이 모두 끝날 때 까지 기다릴 때 사용 
+- `sync.WaitGroup`
+- `func (wg *WaitGroup) Add(delta int)` : 대기 그룹에 고루틴 개수 추가
+- `func (wg * WaitGroup) Done()` : 고루틴 끝났다는 것을 알려줄 때 사용
+- `func (wg *WaitGroup) Wait()` : 모든 고루틴이 끝날 때까지 기다림 
+- Add 로 추가 된 고루틴 개수와 Done 으로 완료된 고루틴 개수가 동일해야 정확하게 동작
+
+```go
+func MyFunc() {
+
+	wg := new(sync.WaitGroup)
+
+	for i := 0; i < 100; i++ {
+		wg.Add(1)
+		go func(n int) {
+			fmt.Println("WaitGroup : ", n)
+			wg.Done()
+		}(i)
+	}
+
+	// Add == Done 횟수가 같아야함
+	wg.Wait()
+
+}
+```
+
+대기그룹 사용 예제 : [go_sync_ex2.go](section9/go_sync_ex2.go)
+
+#### 9.5.3. 원자적 연산
+- 더이상 쪼갤 수 없는 연산 
+- 스레드(고루틴), CPU 코어에서 같은변수(메모리)를 수정할때 서로 영향을 받지 않고 안전하게 연산 가능 
+- [https://pkg.go.dev/sync/atomic](https://pkg.go.dev/sync/atomic)
+- `sync/atomic`
+- `Add 계열` : 변수에 값을 더하고 결과를 리턴
+- `CompareAndSwap 계열` : 변수 A 와 B 를 비교하여 같으면 C를 대입. 그리고 A,B 같으면 true, 다르면 false
+- `Load 계열` : 변수에서 값을 가져옴
+- `Store 계열` : 변수에 값을 저장
+- `Swap 계열` : 변수에서 새 값을 대입하고, 이전 값을 리턴 
+
