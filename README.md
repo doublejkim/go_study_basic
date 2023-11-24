@@ -1896,3 +1896,233 @@ func MyFunc() {
 - `Store 계열` : 변수에 값을 저장
 - `Swap 계열` : 변수에서 새 값을 대입하고, 이전 값을 리턴 
 
+## Section 10. 에러 처리
+
+[Panic 처리 레퍼런스](https://go.dev/ref/spec#Handling_panics)
+
+### 10.1 에러 기초 
+
+#### 10.1.1. 에러 (error) 타입
+- 에러 발생시 사용하는 타입 
+- `Error()` 함수로 에로 내용 확인 가능 
+
+```go
+func MyFunc() {
+
+	f, err := os.Open("unnamedFile")
+
+	if err != nil {
+		//fmt.Println("error Msg : ", err.Error())
+		log.Fatal("error Msg2 : ", err.Error())
+	}
+
+	fmt.Println(f.Name())
+
+}
+```
+
+에러 타입 사용 예제 : [error1.go](section10/error1.go)
+
+#### 10.1.2. 에러 (error) 사용 
+- 특정상황에서의 에러를 정의 가능 
+- `fmt.Errorf()` 또는 `errors.New()` 로 사용 가능
+
+```go
+func notZero(n int) (string, error) {
+	if n != 0 {
+		s := fmt.Sprintf("Hello Golang : %d", n)
+		return s, nil
+	}
+
+	return "", fmt.Errorf("%d를 입력했음!!. 에러 발생 : ", n) //errors.New() 로 대체 가능
+}
+
+func MyFunc() {
+
+	a, err := notZero(1)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Println("result a : ", a)
+
+	b, err := notZero(0)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Println("result b : ", b)
+}
+```
+
+```go
+func MyFunc() {
+	var err1 error = errors.New("Error occurred - 1")
+	err2 := errors.New("Error occurred - 2")
+	
+	fmt.Println("error1 : ", err1)
+	fmt.Println("error1 : ", err1.Error())
+	
+	fmt.Println("error2 : ", err2)
+	fmt.Println("error2 : ", err2.Error())
+}
+```
+
+에러 정의 사용 예제 1 : [error2.go](section10/error2.go) <br>
+에러 정의 사용 예제 2 : [error3.go](section10/error3.go)
+
+### 10.2 에러 고급
+
+#### 10.2.1. 함수 에서의 리턴으로 활용
+- 리턴으로 함수가 기대했던 데로 실행되었는지 여부를 명시할 수 있음 
+
+```go
+func myPower(f float64, i float64) (float64, error) {
+	if f == 0 {
+		return 0, errors.New("0은 사용 불가")
+	}
+	return math.Pow(f, i), nil
+}
+
+func MyFunc() {
+
+	if f, err := myPower(7, 3); err != nil {
+		fmt.Printf("Error Message : %s", err)
+	} else {
+		fmt.Println("myPower result 1 : ", f)
+	}
+
+	if f, err := myPower(0, 3); err != nil {
+		fmt.Printf("Error Message : %s", err)
+	} else {
+		fmt.Println("myPower result 2 : ", f)
+	}
+
+}
+```
+
+함수에서의 에러 활용 예제 : [error_ex1.go](section10/error_ex1.go)
+
+#### 10.2.2. 사용자 에러 정의 
+
+- `error` 인터페이스의 `Error()` 메소드를 구현하여 사용자 에러를 정의 가능
+
+```go
+type PowError struct {
+	time    time.Time // 에러 발생 시간
+	value   float64   // 파라미터 : interface{} 타입으로 하여 어떤 값이라도 받을수있도록하면 활용에 좋음
+	message string    // 에러 메시지
+}
+
+func (e PowError) Error() string {
+	return fmt.Sprintf("[%v]Error - InputValue(value: %g) - %s", e.time, e.value, e.message)
+}
+
+func Power(f, i float64) (float64, error) {
+	if f == 0 {
+		return 0, PowError{time: time.Now(), value: f, message: "0은 사용할 수 없음 "}
+	}
+	if math.IsNaN(f) {
+		return 0, PowError{time: time.Now(), value: f, message: "숫자가 아님"}
+	}
+	if math.IsNaN(i) {
+		return 0, PowError{time: time.Now(), value: f, message: "숫자가 아님"}
+	}
+	return math.Pow(f, i), nil
+}
+
+func MyFunc() {
+
+	v, err := Power(10, 3)
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println("Result 1 : ", v)
+
+	t, err := Power(10, 3)
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println("Result 2 : ", t)
+}
+```
+
+사용자 정의 에러 사용 : [error_ex2](section10/error_ex2.go)
+
+### 10.3. Panic, Recover 의 사용 
+
+#### 10.3.1. Panic
+
+- 사용자가 Panic 발생 가능 
+- Panic 함수는 호출 즉시, 해당 메소드를 즉시 중지 시키고 defer 함수를 호출하고 자기자신을 호출한 곳으로 리턴 
+- 런타임 이외에 사용자가 코드 흐름에 따라 Panic 을 발생시켜 활용할 수 도 있음
+
+```go
+func MyFunc() {
+	fmt.Println("Start !!!")
+	panic("Error occurred : user stopped!!")
+	fmt.Println("Finish !!!") // 실행 불가
+}
+```
+panic 사용 예제 : [panic_recover1.go](section10/panic_recover1.go)
+
+#### 10.3.2. Recover 
+
+- 에러 복구 가능
+- Panic 으로 발생한 에러를 보구 후 코드 재 실행 (프로그램 종료되지 않음 )
+- Panic 에서 설정한 메시지를 받아 올 수 있음 
+
+```go
+// 에러 발생 recover 예제 1
+func runFunc() {
+	defer func() {
+		s := recover()
+		fmt.Println("Error Message : ", s)
+	}()
+	
+	a := [3]int{1, 2, 3}
+	
+	for i := 0; i < 5; i++ {
+		fmt.Println("ex : ", a[i]) // 에러 발생
+	}
+}
+
+func MyFunc() {
+
+runFunc()
+	fmt.Println("Hello???")
+}
+```
+
+```go
+// 에러 발생 recover 예제 2
+func fileOpen(filename string) {
+
+	defer func() {
+		if r := recover(); r != nil {
+			fmt.Println("File Open Error : ", r)
+		}
+	}()
+
+	f, err := os.Open(filename)
+	if err != nil {
+		panic(err)
+	} else {
+		fmt.Println("Open File Name : ", f.Name())
+	}
+
+	defer f.Close()
+}
+
+func MyFunc() {
+
+	fileOpen("test")
+
+	fmt.Println("End Main!!!!")
+}
+```
+
+recover 예제 1 : [panic_recover3.go](section10/panic_recover3.go) <br>
+recover 예제 2 : [panic_recover4.go](section10/panic_recover4.go)
