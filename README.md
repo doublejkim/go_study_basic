@@ -106,6 +106,31 @@ a = 1 // 에러 발생
 
 if 문 사용 예제 : [if1.go](section3/if1.go)
 
+```go
+func If1() {
+
+	var a int = 15
+	b := 15
+
+	if a >= 15 {
+		fmt.Println("a 는 15 이상")
+	}
+
+	if b >= 30 {
+		fmt.Println("b 는 30 이상")
+	}
+
+	if a >= 0 && a < 10 {
+		fmt.Println("a >= 0 && a <10")
+	} else if a >= 10 && a < 20 {
+		fmt.Println("a >= 10 && a < 20 ")
+	} else {
+		fmt.Println("Unknown....")
+	}
+
+}
+```
+
 ### 3.2. switch 문 
 
 - switch 뒤 표현식(Expression) 생략 가능
@@ -116,6 +141,38 @@ if 문 사용 예제 : [if1.go](section3/if1.go)
 switch 문 사용 예제 1 : [switch1.go](section3/switch1.go) <br>
 switch 문 사용 예제 2 : [switch2.go](section3/switch2.go) <br>
 switch 문 사용 예제 3 : [switch3.go](section3/switch3.go) <br>
+
+```go
+func MyFunc() {
+
+	a := 30 / 15
+	switch a {
+	case 2, 4, 6, 8:
+		fmt.Println("2, 4, 6, 8")
+	case 1, 3, 5, 7, 9:
+		fmt.Println("1, 3, 5, 7, 9")
+	default:
+		fmt.Println("Default!!!!")
+	}
+
+	switch e := "go"; e {
+	case "java":
+		fmt.Println("Java!!!")
+		fallthrough
+	case "go":
+		fmt.Println("Go!!!")
+		fallthrough
+	case "python":
+		fmt.Println("Python!!!")
+		fallthrough
+	case "ruby":
+		fmt.Println("Ruby!!!")
+		fallthrough
+	case "c":
+		fmt.Println("C!!!")
+	}
+}
+```
 
 ### 3.3. for 문
 
@@ -2126,3 +2183,69 @@ func MyFunc() {
 
 recover 예제 1 : [panic_recover3.go](section10/panic_recover3.go) <br>
 recover 예제 2 : [panic_recover4.go](section10/panic_recover4.go)
+
+## Section 11. 파일 입출력
+
+### 11.1. 파일 읽기/쓰기  
+
+#### 11.1.1. 파일 쓰기
+- os 패키지에서 제공 
+- `func Create(name string) (file *File, err error)` : 기존 파일을 열거나 새 파일을 생성 
+- `func (f *File) Close() error` : 열린 파일을 닫음 
+- `func (f *File) Write(b []byte) (n int, err error)` : 파일에 값을 씀. 파일에 쓴 데이터의 길이와 에러 값을 리턴
+
+```go
+func MyFunc() {
+
+	file, err := os.Create("test_write1.txt")
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	defer file.Close()
+
+	str := "Hello World..."
+
+	n, err := file.Write([]byte(str)) // str 을 []byte 슬라이스로 변환. str 을 파일에 저장
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	fmt.Println(n, " 바이트 저장 완료")
+
+}
+```
+
+#### 11.1.2. 파일 쓰기 - CSV
+- encoding/csv 패키지를 사용하면 편하게 사용 가능 
+
+```go
+func MyFunc() {
+
+	file, err := os.Create("test_write.csv")
+	if err != nil {
+		fmt.Println("file open error")
+		return
+	}
+
+	defer file.Close()
+
+	wr := csv.NewWriter(file)
+	// wr := csv.NewWriter(bufio.NewRiter(file)) // 버퍼 사용을 더 권장
+
+	wr.WriteAll([][]string{{"Kim", "M", "99"}, {"Lee", "W", "100"}, {"Park", "M", "70"}})
+	wr.Flush()
+
+	fi, err := file.Stat()
+	if err != nil {
+		fmt.Println("file.Stat() error : ", err)
+		return
+	}
+
+	fmt.Printf("CSV 쓰기 작업 후 파일 크기 (%d bytes)\n", fi.Size())
+	fmt.Println("CSV 파일명 : ", fi.Name())
+	fmt.Println("운영체제 파일 권한 : ", fi.Mode())
+}
+```

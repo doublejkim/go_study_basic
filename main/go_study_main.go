@@ -1,6 +1,8 @@
 package main
 
-import "go_study_basic/section10"
+import (
+	"go_study_basic/section11"
+)
 
 func main() {
 
@@ -89,5 +91,7 @@ func main() {
 	//section10.PanicRecover1()
 	//section10.PanicRecover2()
 	//section10.PanicRecover3()
-	section10.PanicRecover4()
+	//section10.PanicRecover4()
+	//section11.FileWrite1()
+	section11.FileWrite2()
 }
