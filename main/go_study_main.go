@@ -93,5 +93,6 @@ func main() {
 	//section10.PanicRecover3()
 	//section10.PanicRecover4()
 	//section11.FileWrite1()
-	section11.FileWrite2()
+	//section11.FileWrite2()
+	section11.FileWrite3()
 }

@@ -2186,9 +2186,9 @@ recover 예제 2 : [panic_recover4.go](section10/panic_recover4.go)
 
 ## Section 11. 파일 입출력
 
-### 11.1. 파일 읽기/쓰기  
+### 11.1. 파일 쓰기
 
-#### 11.1.1. 파일 쓰기
+#### 11.1.1. 파일 쓰기 - 기본
 - os 패키지에서 제공 
 - `func Create(name string) (file *File, err error)` : 기존 파일을 열거나 새 파일을 생성 
 - `func (f *File) Close() error` : 열린 파일을 닫음 
@@ -2217,6 +2217,8 @@ func MyFunc() {
 
 }
 ```
+
+파일쓰기 기본 예제 : [file_write1.go](section11/file_write1.go)
 
 #### 11.1.2. 파일 쓰기 - CSV
 - encoding/csv 패키지를 사용하면 편하게 사용 가능 
@@ -2249,3 +2251,13 @@ func MyFunc() {
 	fmt.Println("운영체제 파일 권한 : ", fi.Mode())
 }
 ```
+
+파일 쓰기 csv 예제 : [file_write2.go](section11/file_write2.go)
+
+### 11.2. 파일 읽기
+
+#### 11.2.1. 파일 읽기 기본 
+- os 패키지에서 제공
+- `func Open(name string) (file *File, err error)` : 파일 읽기
+- `func (f *File) Stat() (fi FileInfo, err error)` : 파일의 정보를 얻어옴 
+- `func (f *File) Read(b []byte) (n int, err error)` : 파일에서 값을 읽음. 파일에서 읽은 데이터의 길이와 에러 값을 리턴
