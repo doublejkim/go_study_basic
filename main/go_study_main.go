@@ -1,8 +1,6 @@
 package main
 
-import (
-	"go_study_basic/section11"
-)
+import "go_study_basic/section2"
 
 func main() {
 
@@ -96,5 +94,9 @@ func main() {
 	//section11.FileWrite2()
 	//section11.FileWrite3()
 	//section11.FileRead1()
-	section11.FileRead2()
+	//section11.FileRead2()
+	//section2.CompareFloatMistake()
+	//section2.CompareFloat1()
+	//section2.CompareFloat2()
+	section2.CompareFloat3()
 }
